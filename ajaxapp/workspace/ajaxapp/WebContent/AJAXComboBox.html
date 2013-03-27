@@ -1,0 +1,193 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+<head>
+	<title>AJAX Example</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+	<link rel="stylesheet" type="text/css" href="css/reports.css">
+</head>
+
+<body onload="onLoadPage()">
+	<table id="main">
+		<tr>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td>
+			
+				<!-- START - HEADER -->
+				<table id="header" style="border-collapse: collapse; width: 100%;">
+					<tr>
+						<td height="185" width="100%" align="center"><img
+							src="images/ic-ajax.jpg" border="0" height="182" width="368">
+						</td>
+					</tr>
+				</table> <!-- END - HEADER -->
+				
+				<table style="border-collapse: collapse; width: 100%; border: none;">
+					<tr>
+						<td colspan="9">&nbsp;</td>
+					</tr>
+				</table>
+				
+				<!-- START - TABLE WITH DYNAMIC CONTENT -->
+				<table id="tableWithDynamicContet" style="border-collapse: collapse; width: 100%;">
+					<tr>
+						<td colspan="9">&nbsp;</td>
+					</tr>
+					<tr>
+						<td colspan="9" align="center">
+							<b><font class="font_titulo">Select a number</font></b>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="9" align="center">
+							<select name="comboBox1" id="comboBox1" onchange="doOnChangeComboBoxAUX()">
+								<option value="">-- Select --</option>
+								<option value="0">0</option>
+								<option value="1">1</option>
+								<option value="2">2</option>
+								<option value="3">3</option>
+								<option value="4">4</option>
+								<option value="5">5</option>
+								<option value="6">6</option>
+								<option value="7">7</option>
+								<option value="8">8</option>
+							</select>
+						</td>
+					</tr>
+					<tr id="trShowNumbers">
+						<td colspan="9" align="center">
+							<b><font class="font_titulo">Multiplied by the selected number: 1/10/100/1000/10000</font></b>
+						</td>
+					</tr>
+					<tr id="trComboBoxShowNumbers">
+						<td colspan="9" align="center">
+							<div id="divComboBoxShowNumbers"></div>
+						</td>
+					</tr>
+					
+				</table>
+				<!-- END - TABLE WITH DYNAMIC CONTENT -->
+				
+			</td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+	</table>
+	
+	<script type="text/javascript" src="js/functions.js"></script>
+	<script language="javascript">
+		function onLoadPage()
+		{
+			setDisplayTrObject('OFF', 'trShowNumbers');
+			setDisplayTrObject('OFF', 'trComboBoxShowNumbers');
+		}
+		
+		
+		function doOnChangeComboBox1()
+		{
+			var xmlhttp;
+			var txt, x, i;
+			
+			// code for IE7+, Firefox, Chrome, Opera, Safari
+			if (window.XMLHttpRequest)
+				xmlhttp = new XMLHttpRequest();
+			
+			// code for IE6, IE5
+			else
+				xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+			
+			xmlhttp.onreadystatechange = function()
+			{
+				if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
+				{
+					xmlDoc = xmlhttp.responseXML;
+					x      = xmlDoc.getElementsByTagName("VALUE");
+					
+					if(x[0].childNodes[0].nodeValue == '?')
+					{
+						setDisplayTrObject('OFF', 'trShowNumbers');
+						setDisplayTrObject('OFF', 'trComboBoxShowNumbers');
+						document.getElementById("divComboBoxShowNumbers").innerHTML = '';
+					}
+					else
+					{
+						txt = "";				
+						txt    = txt + "\n<select name='comboBox2' id='comboBox2'>\n";
+						
+						for (i = 0; i < x.length; i++)
+							txt = txt +  "<option value='" + 
+										 x[i].childNodes[0].nodeValue + "'>" +
+										 x[i].childNodes[0].nodeValue + 
+										 "</option>\n";
+						
+						txt = txt + "</select>\n";
+						setDisplayTrObject('ON', 'trShowNumbers');
+						setDisplayTrObject('ON', 'trComboBoxShowNumbers');
+						document.getElementById("divComboBoxShowNumbers").innerHTML = txt;
+					}
+				}
+			}
+			
+			var key = document.getElementById('comboBox1').options[document.getElementById('comboBox1').selectedIndex].value;
+			var url = "/ajaxapp/AjaxComboBoxServlet?option=" + key;
+			xmlhttp.open("GET", url, true);
+			xmlhttp.send(null);
+		}
+		
+		function doOnChangeComboBoxAUX()
+		{
+			var xmlhttp;
+			var txt, x, i;
+			
+			if (window.XMLHttpRequest)
+				xmlhttp = new XMLHttpRequest();
+			else
+				xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+			
+			xmlhttp.onreadystatechange = function()
+			{
+				if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
+				{
+					xmlDoc = xmlhttp.responseXML;
+					x      = xmlDoc.getElementsByTagName("VALUE");
+					
+					if(x[0].childNodes[0].nodeValue == '?')
+					{
+						setDisplayTrObject('OFF', 'trShowNumbers');
+						setDisplayTrObject('OFF', 'trComboBoxShowNumbers');
+						document.getElementById("divComboBoxShowNumbers").innerHTML = '';
+					}
+					else
+					{
+						txt = "";				
+						
+						for (i = 0; i < x.length; i++)
+							txt = txt +  "\n<input type='checkbox' value='" + 
+										 x[i].childNodes[0].nodeValue + 
+										 "' name='disciplinaSelected'/>" + 
+										 x[i].childNodes[0].nodeValue + "</br>\n";
+						
+						setDisplayTrObject('ON', 'trShowNumbers');
+						setDisplayTrObject('ON', 'trComboBoxShowNumbers');
+						document.getElementById("divComboBoxShowNumbers").innerHTML = txt;
+					}
+				}
+			}
+			
+			var key = document.getElementById('comboBox1').options[document.getElementById('comboBox1').selectedIndex].value;
+			var url = "/ajaxapp/AjaxComboBoxServlet?option=" + key;
+			xmlhttp.open("GET", url, true);
+			xmlhttp.send(null);
+		}
+	</script>
+</body>
+</html>
